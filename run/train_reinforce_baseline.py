@@ -179,7 +179,7 @@ def main():
     
     # Save metrics and generate plots
     logger.save_metrics()
-    plot_metrics(logger.get_metrics(), args.artifact_dir)
+    plot_metrics(logger.get_metrics(), Path(args.artifact_dir) / "plots")
     logger.close()
     
     # Print summary
