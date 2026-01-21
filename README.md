@@ -22,51 +22,39 @@ pip install -r requirements.txt
 
 **Basic REINFORCE:**
 ```bash
-python run/train_basic_reinforce.py --env CartPole-v1 --seed 0 --max_episodes 1000
+python reinforce.py --env CartPole-v1 --seed 0 --max_episodes 1000
 ```
 
 **REINFORCE with Baseline:**
 ```bash
-python run/train_reinforce_baseline.py --env CartPole-v1 --seed 0 --max_episodes 1000
+python reinforce_baseline.py --env CartPole-v1 --seed 0 --max_episodes 1000
 ```
 
 **Actor-Critic:**
 ```bash
-python run/train_actor_critic.py --env CartPole-v1 --seed 0 --max_episodes 1000
-```
-
-### Testing a Trained Agent
-
-```bash
-python run/test_agent.py --checkpoint artifacts/section1_basic_reinforce/checkpoints/policy_final.pt --env CartPole-v1 --render
+python actor_critic.py --env CartPole-v1 --seed 0 --max_episodes 1000
 ```
 
 ### Viewing TensorBoard Logs
 
 ```bash
-tensorboard --logdir artifacts/
+tensorboard --logdir results/
 ```
 
 Then open `http://localhost:6006` in your browser.
 
-### Generating Plots
-
-```bash
-python run/make_plots.py --metrics_file artifacts/section1_basic_reinforce/metrics.json --output_dir artifacts/section1_basic_reinforce/plots
-```
-
 ## Output Locations
 
-All outputs are saved under `artifacts/`:
+All outputs are saved under `results/`:
 
-- `artifacts/section1_basic_reinforce/`
+- `results/reinforce/`
   - `checkpoints/` - Saved model weights
   - `metrics.json` - Training metrics (episode returns, losses, etc.)
   - `plots/` - Generated plots (PNG files)
   - `tensorboard/` - TensorBoard event files
 
-- `artifacts/section1_reinforce_baseline/` - Same structure
-- `artifacts/section2_actor_critic/` - Same structure
+- `results/reinforce_baseline/` - Same structure
+- `results/actor_critic/` - Same structure
 
 ## Command-Line Arguments
 
@@ -82,21 +70,23 @@ All training scripts support:
 - `--max_steps`: Maximum steps per episode (default: `500`)
 - `--log_dir`: TensorBoard log directory (default: auto-generated)
 - `--artifact_dir`: Artifact output directory (default: auto-generated)
-- `--normalize_returns`: Normalize returns/advantages (default: `False`)
-- `--entropy_coef`: Entropy bonus coefficient (default: `0.0`, AC only)
+- `--normalize_returns`: Normalize returns (REINFORCE only, default: `False`)
+- `--normalize_advantages`: Normalize advantages (baseline/AC only, default: `False`)
+- `--entropy_coef`: Entropy bonus coefficient (default: `0.0` for REINFORCE/baseline, `0.01` for AC)
+- `--eval_interval`: Evaluation interval in episodes (default: `100`)
+- `--eval_episodes`: Number of episodes for evaluation (default: `10`)
+- `--update_mode`: Update mode for Actor-Critic (default: `episode`, choices: `step` or `episode`)
 
 ## Project Structure
 
 ```
 reinforce-and-actor-critic/
-├── src/              # Source code modules
-│   ├── common/       # Utilities (logging, plotting, seeding)
-│   ├── envs/         # Environment creation
-│   └── pg/           # Policy gradient algorithms
-├── run/              # Training and testing scripts
-├── scripts/          # Utility scripts
-├── report/           # Report template
-└── artifacts/        # Outputs (checkpoints, logs, plots)
+├── reinforce.py              # REINFORCE algorithm (standalone)
+├── reinforce_baseline.py     # REINFORCE with baseline (standalone)
+├── actor_critic.py           # Actor-Critic algorithm (standalone)
+├── README.md                 # This file
+├── requirements.txt          # Python dependencies
+└── results/                  # Outputs (checkpoints, logs, plots)
 ```
 
 ## Notes
@@ -105,4 +95,4 @@ reinforce-and-actor-critic/
 - Metrics are saved to JSON for easy analysis
 - TensorBoard logs include scalar metrics and histograms
 - Checkpoints are saved periodically and at the end of training
-
+- Each script is completely self-contained with no local imports
